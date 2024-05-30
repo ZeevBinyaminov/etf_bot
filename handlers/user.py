@@ -139,7 +139,22 @@ async def assemble_optimized_portfolio(message: types.Message, state: FSMContext
         + f"Коэффициент Шарпа: {sharpe_ratio:.2f}"
     )
 
-    await message.answer(response, reply_markup=main_inkb)
+    fig, ax = plt.subplots(figsize=(15, 13))
+    assets = weights
+    labels = assets.keys()
+    sizes = assets.values()
+
+    ax.pie(sizes, labels=labels, autopct='%1.1f%%')
+    ax.axis('equal')
+
+    graph_path = f'portfolio_pie_chart{message.from_user.id}.png'
+    plt.savefig(graph_path)
+
+    with open(graph_path, 'rb') as photo:
+        await message.answer_document(photo, caption=f"Ваш портфель по долям активов: {response}",
+                                      reply_markup=main_inkb)
+
+    os.remove(graph_path)
     # await bot.delete_message(message.from_user.id, message.message_id)
     await state.finish()
 
