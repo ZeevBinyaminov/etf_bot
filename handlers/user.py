@@ -38,9 +38,9 @@ async def start_portfolio_assembly(message: types.Message, state: FSMContext):
 @dp.callback_query_handler(lambda callback_query: callback_query.data == "assemble_portfolio")
 async def assemble_portfolio(callback_query: types.CallbackQuery, state: FSMContext):
     user_id = callback_query.from_user.id
-    has_portfolio = await user_db.user_has_portfolio(user_id)
+    has_risk_profile = await user_db.user_has_risk_profile(user_id)
 
-    if not has_portfolio:
+    if not has_risk_profile:
         await bot.edit_message_reply_markup(callback_query.from_user.id, callback_query.message.message_id, reply_markup=None)
         await callback_query.message.answer("Выберите уровень риска:", reply_markup=risk_level_keyboard)
         await PortfolioStates.RISK_LEVEL.set()
